@@ -2,7 +2,7 @@
 
 This is a final project of the graduate course Python and Data Science 
 
-Python packages:
+### Python packages:
 
 Data manipulation: Sqldf, Pandas, Numpy 
 Data visualized: NLTK, Matplotlib, Seaborn
