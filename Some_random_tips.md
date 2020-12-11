@@ -1,6 +1,6 @@
-1. Jupyter Notebook:
+### 1. Jupyter Notebook:
 
-# Get the right path for pip install packages, say, wordcloud
+// Get the right path for pip install packages, say, wordcloud
 
 import sys
 print(sys.executable)
