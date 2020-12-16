@@ -7,3 +7,7 @@ print(sys.executable)
 
 path/to/python -m pip install some_package
 
+//pretty print all cell's output and not just the last one
+
+from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = 'all'
