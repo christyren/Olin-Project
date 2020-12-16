@@ -11,3 +11,9 @@ path/to/python -m pip install some_package
 
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = 'all'
+
+//uninstall a python version on MAC
+
+https://stackoverflow.com/questions/3819449/how-to-uninstall-python-2-7-on-a-mac-os-x-10-6-4
+
+
