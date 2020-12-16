@@ -16,4 +16,5 @@ InteractiveShell.ast_node_interactivity = 'all'
 
 https://stackoverflow.com/questions/3819449/how-to-uninstall-python-2-7-on-a-mac-os-x-10-6-4
 
-
+//Some tips for jupyter notebook
+https://nbviewer.jupyter.org/github/MeierG/text-analysis-nsf-grant-abstracts/blob/master/notebooks/nsf-grants.ipynb
