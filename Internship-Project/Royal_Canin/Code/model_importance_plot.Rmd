@@ -1,0 +1,84 @@
+---
+title: "final_model"
+author: '473935'
+date: "4/27/2020"
+output: pdf_document
+---
+
+
+```{r}
+setwd("/Users/renmengyuan/WashU Study/CEL/data")
+df=read.csv('mode_for_type.csv',na.strings=c("", "NA"))
+df=na.omit(df)
+head(df)
+```
+```{r, }
+# divide columns
+to_scale_cols=df[c(4:6,10:11,15)]
+other_predictors=df[-c(1:2,4:6,10:11,15)]
+
+# split training set
+set.seed(1)
+train_row=sample(1:nrow(df),0.8*nrow(df))
+
+# scaling
+train <- to_scale_cols[train_row,] 
+mins <- apply(train, 2, min)
+maxs <- apply(train, 2, max)
+train <- data.frame(scale(train, center = mins, scale = maxs - mins))
+
+test <- to_scale_cols[-train_row,]
+mins <- apply(test, 2, min)
+maxs <- apply(test, 2, max)
+test <- data.frame(scale(test, center = mins, scale = maxs - mins))
+
+# combine scaled numeric variables with remaining variables
+df_train=cbind(train,other_predictors[train_row,])
+df_test=cbind(test,other_predictors[-train_row,])
+
+# specify the baseline level for some factors
+df_train$Online_Pharmacy <- relevel(df_train$Online_Pharmacy, ref = 'COVETRUS')
+df_train$Clinic_Type <- relevel(df_train$Clinic_Type, ref = 'Other')
+df_train$Animal_Species <- relevel(df_train$Animal_Species, ref = 'OTHER')
+df_train$Product_group <- relevel(df_train$Product_group, ref = 'Others')
+df_train$Life_Cycle <- relevel(df_train$Life_Cycle, ref = 'Other')
+df_train$Technology.Type <- relevel(df_train$Technology.Type, ref = 'Other')
+
+# logit model
+logit1= glm(if_order~.-state, data=df_train, family = binomial) 
+summary(logit1)
+```
+```{r}
+glm.probs=predict(logit1,df_test,type="response") 
+glm.pred=rep(0,nrow(df_test)) 
+glm.pred[glm.probs>0.5]=1 
+table(glm.pred,df_test$if_order)
+mean(glm.pred!=df_test$if_order)
+```
+
+
+```{r}
+#get_importance_for_continuous <- function(v_name){
+  #mins <- apply(train[,v_name], 2, min)
+  #maxs <- apply(train[,v_name], 2, max)
+  #return(abs(maxs - mins))
+#}
+
+get_plot_for_continuous <- function(v_name){
+  v = as.vector(df_train[,v_name])
+  plot(sort(v))
+}
+```
+
+
+```{r}
+get_plot_for_continuous("how_long")
+get_plot_for_continuous("day_since_last_order")
+get_plot_for_continuous("cancel")
+get_plot_for_continuous("recent4_avg_quantity")
+get_plot_for_continuous("recent6_orders")
+```
+```{r}
+head(to_scale_cols)
+```
+

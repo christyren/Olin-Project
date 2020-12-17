@@ -1,0 +1,107 @@
+---
+title: "final_model"
+author: '473935'
+date: "4/27/2020"
+output: pdf_document
+---
+
+
+```{r}
+setwd("/Users/renmengyuan/WashU Study/CEL/data")
+df=read.csv('mode_for_type.csv',na.strings=c("", "NA"))
+df=na.omit(df)
+
+# divide columns
+to_scale_cols=df[c(4:6,10:11,15)]
+other_predictors=df[-c(1:2,4:6,10:11,15)]
+
+# scaling
+mins <- apply(to_scale_cols, 2, min)
+maxs <- apply(to_scale_cols, 2, max)
+to_scale_cols <- data.frame(scale(to_scale_cols, center = mins, scale = maxs - mins))
+
+# combine scaled numeric variables with remaining variables
+df=cbind(to_scale_cols,other_predictors)
+
+# specify the baseline level for some factors
+df$Online_Pharmacy <- relevel(df$Online_Pharmacy, ref = 'COVETRUS')
+df$Clinic_Type <- relevel(df$Clinic_Type, ref = 'Other')
+df$Animal_Species <- relevel(df$Animal_Species, ref = 'OTHER')
+df$Product_group <- relevel(df$Product_group, ref = 'Others')
+df$Life_Cycle <- relevel(df$Life_Cycle, ref = 'Other')
+df$Technology.Type <- relevel(df$Technology.Type, ref = 'Other')
+
+# logit model
+logit= glm(if_order~.-state, data=df, family = binomial) 
+summary(logit)
+```
+
+
+
+```{r}
+library(broom)
+require(knitr)
+library(dplyr)
+out <- tidy(logit)
+out
+write.csv(out, "out_coefficient.csv")
+```
+
+```{r}
+category_v = c('Online_Pharmacy', 'Clinic_Type', 'Animal_Species', 'Product_group','Life_Cycle','Technology.Type')
+#Mode <- function(x) {
+   #ux <- unique(x)
+   #ux[which.max(tabulate(match(x, ux)))]
+#}
+#df_mode = df
+#for(i in category_v){
+#df_mode[i] <- Mode(df_mode[,i])}
+
+df_mode = df
+for(i in category_v){
+df_mode[i] <- names(sort(-table(df[,i])))[1]
+}
+df_mode
+```
+
+```{r}
+#get_importance_for_continuous <- function(v_name){
+  #mins <- apply(train[,v_name], 2, min)
+  #maxs <- apply(train[,v_name], 2, max)
+  #return(abs(maxs - mins))
+#}
+library(ggplot2)
+continuous_v = c("how_long","day_since_last_order","cancel","recent4_avg_quantity","recent6_orders")
+get_plot_for_continuous <- function(v_name){
+  df_mean = df_mode
+  for(i in continuous_v){
+  df_mean[i]<-mean(df_mean[,i])}
+  v = as.vector(df_mode[,v_name])
+  Mean = mean(v)
+  upper = Mean + 1.96*sd(df_mean$v)
+  lower = Mean - 1.96*sd(df_mean$v)
+  steps = 1000
+  stepSize <- (upper - lower) / steps
+  stepSize = stepSize[1,1]
+  lower = lower[1,1]
+  v1 <- lower + c(1:steps)*stepSize
+  df_new=df_mean[1:1000,]
+  df_new[v_name] = v1
+  x = v1
+  y = predict(logit1,df_new,type="response") 
+  plot(x,y,xlab = "scaled_confidence_interval", ylab=v_name, pch=19, col = "deepskyblue4")
+  cat(v_name, " importance: ", max(y) - min(y))
+}
+
+for(i in continuous_v){
+  get_plot_for_continuous(i)
+}
+
+```
+
+
+```{r}
+df_mean = df_mode
+sd(df_mean$cancel)
+```
+
