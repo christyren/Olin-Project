@@ -19,6 +19,6 @@ https://stackoverflow.com/questions/3819449/how-to-uninstall-python-2-7-on-a-mac
 //Some tips for jupyter notebook
 https://nbviewer.jupyter.org/github/MeierG/text-analysis-nsf-grant-abstracts/blob/master/notebooks/nsf-grants.ipynb
 
-//Add a 
-new_path = '/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages'
+//Add a new path <br>
+new_path = '/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages' <br>
 sys.path.append(new_path)
