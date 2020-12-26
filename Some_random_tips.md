@@ -22,3 +22,8 @@ https://nbviewer.jupyter.org/github/MeierG/text-analysis-nsf-grant-abstracts/blo
 //Add a new path <br>
 new_path = '/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages' <br>
 sys.path.append(new_path)
+
+
+//Change package
+
+It must relate to the renaming and deprecation of cross_validation sub-module to model_selection. Try substituting cross_validation to model_selection
